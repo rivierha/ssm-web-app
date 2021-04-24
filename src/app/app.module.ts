@@ -34,6 +34,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { CreateInstanceDialogComponent } from './create-instance-dialog/create-instance-dialog.component';
 import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-dialog.component';
 import { LogsComponent } from './logs/logs.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -68,7 +70,9 @@ import { LogsComponent } from './logs/logs.component';
     MatSortModule,
     FlexLayoutModule,
     MatPaginatorModule,
-    MatDialogModule
+    MatDialogModule,
+    MatToolbarModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]

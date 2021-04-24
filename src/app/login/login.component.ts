@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 const googleLogoURL = 
 "https://raw.githubusercontent.com/fireflysemantics/logo/master/Google.svg";
@@ -17,7 +18,7 @@ export class LoginComponent implements OnInit {
   userForm: FormGroup;
   hide = true;
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService, private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private matIconRegistry: MatIconRegistry, private domSanitizer: DomSanitizer, private router: Router) {
     this.userForm = this.formBuilder.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required]]
@@ -49,5 +50,6 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     console.warn(this.userForm.value);
     this.authService.signInWithEmailPassword(this.userForm.value.email, this.userForm.value.password);
+    this.router.navigate(['/instances']);
   }
 }

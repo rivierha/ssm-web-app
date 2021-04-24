@@ -4,7 +4,7 @@
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter records based on name, status, date" #input>
     </mat-form-field>
     <div class="example-button-container">
-        <button mat-flat-button color="primary" aria-label="Create a new instance" (click)="openCreateInstanceDialog()">
+        <button mat-flat-button color="primary" matTooltip="Create a new instance" (click)="openCreateInstanceDialog()">
             New instance
         </button>
     </div>
@@ -38,7 +38,7 @@
         <ng-container matColumnDef="logs">
             <th mat-header-cell *matHeaderCellDef> Logs </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="primary" (click)="redirectToPage(element.id)">
+                <button mat-icon-button color="primary" matTooltip="View instance logs" (click)="redirectToLogsPage(element.id)">
                     <mat-icon class="mat-18">timeline</mat-icon>
                 </button>
             </td>
@@ -47,7 +47,7 @@
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef> Use </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="accent" (click)="redirectToPage(element.id)" [disabled]='element.status == "INUSE" ? true : false' (click)="openUseInstanceDialog()">
+                <button mat-icon-button color="accent" matTooltip="Use this instance" (click)="redirectToPage(element.id)" [disabled]='element.status == "INUSE" ? true : false' (click)="openUseInstanceDialog()">
                     <mat-icon class="mat-18">layers</mat-icon>                    
                 </button>
             </td>
@@ -56,7 +56,7 @@
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" (click)="redirectToPage(element.id)">
+                <button mat-icon-button color="warn" matTooltip="Delete this instance" (click)="redirectToPage(element.id)">
                     <mat-icon class="mat-18">delete</mat-icon>
                 </button>
             </td>

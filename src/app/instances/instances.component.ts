@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CreateInstanceDialogComponent } from '../create-instance-dialog/create-instance-dialog.component';
 import { UseInstanceDialogComponent } from '../use-instance-dialog/use-instance-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-instances',
@@ -19,7 +20,7 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   
-  constructor(private dialog: MatDialog) {   }
+  constructor(private dialog: MatDialog, private router: Router ) {   }
 
   ngOnInit(): void {
   }
@@ -31,6 +32,11 @@ export class InstancesComponent implements OnInit, AfterViewInit {
 
   redirectToPage(value: any) {
     console.warn(value, "Redirect called");
+  }
+
+  redirectToLogsPage(value: any) {
+    console.warn(value, "RedirectToLogsPage called");
+    this.router.navigate(['/logs']);
   }
 
   public doFilter = (value: string) => {
