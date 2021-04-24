@@ -2,7 +2,9 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { CreateInstanceDialogComponent } from '../create-instance-dialog/create-instance-dialog.component';
+import { UseInstanceDialogComponent } from '../use-instance-dialog/use-instance-dialog.component';
 
 @Component({
   selector: 'app-instances',
@@ -16,13 +18,15 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  
+  constructor(private dialog: MatDialog) {   }
+
+  ngOnInit(): void {
+  }
+
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-  }
-  constructor() {   }
-
-  ngOnInit(): void {
   }
 
   redirectToPage(value: any) {
@@ -37,7 +41,41 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  openCreateInstanceDialog() {
+
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {
+      id: 1,
+      title: 'Angular For Beginners'
+    };
+    this.dialog.open(CreateInstanceDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(CreateInstanceDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+        data => console.log("Dialog output:", data)
+    );  
+  }
   
+  openUseInstanceDialog() {
+    const dialogConfig = new MatDialogConfig();
+
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.data = {
+      id: 1,
+      title: 'Angular For Beginners'
+    };
+    this.dialog.open(UseInstanceDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(UseInstanceDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+        data => console.log("Dialog output:", data)
+    );  
+  }
 
 }
 export interface PeriodicElement {

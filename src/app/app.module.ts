@@ -31,6 +31,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import {MatDialogModule} from '@angular/material/dialog';
+import { CreateInstanceDialogComponent } from './create-instance-dialog/create-instance-dialog.component';
+import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import {MatDialogModule} from '@angular/material/dialog';
     LoginComponent,
     HomeComponent,
     TeamsComponent,
-    InstancesComponent
+    InstancesComponent,
+    CreateInstanceDialogComponent,
+    UseInstanceDialogComponent
   ],
   imports: [
     BrowserModule,
