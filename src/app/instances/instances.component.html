@@ -1,17 +1,16 @@
-<div class="example-button-container">
-    <button mat-fab color="primary" aria-label="Create a new instance" (click)="openCreateInstanceDialog()">
-        <mat-icon>plus_one</mat-icon>
-    </button>
-</div>
-
-<div fxLayout fxLayoutAlign="center center">
+<div fxLayout fxLayoutAlign="space-around center">
     <mat-form-field fxFlex="40%">
         <mat-label>Filter</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter records based on name, status, date" #input>
     </mat-form-field>
+    <div class="example-button-container">
+        <button mat-flat-button color="primary" aria-label="Create a new instance" (click)="openCreateInstanceDialog()">
+            New instance
+        </button>
+    </div>
 </div>
 
-<div class="mat-elevation-z8">
+<div style="padding: 20px;">
     <table mat-table [dataSource]="dataSource" matSort>
 
         <!-- Name Column -->
@@ -40,7 +39,7 @@
             <th mat-header-cell *matHeaderCellDef> Logs </th>
             <td mat-cell *matCellDef="let element">
                 <button mat-icon-button color="primary" (click)="redirectToPage(element.id)">
-                    <mat-icon class="mat-18">reorder</mat-icon>
+                    <mat-icon class="mat-18">timeline</mat-icon>
                 </button>
             </td>
         </ng-container>

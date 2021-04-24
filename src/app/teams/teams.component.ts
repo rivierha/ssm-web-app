@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Validators, FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-teams',

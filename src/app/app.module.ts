@@ -33,6 +33,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import {MatDialogModule} from '@angular/material/dialog';
 import { CreateInstanceDialogComponent } from './create-instance-dialog/create-instance-dialog.component';
 import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-dialog.component';
+import { LogsComponent } from './logs/logs.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-d
     TeamsComponent,
     InstancesComponent,
     CreateInstanceDialogComponent,
-    UseInstanceDialogComponent
+    UseInstanceDialogComponent,
+    LogsComponent
   ],
   imports: [
     BrowserModule,
