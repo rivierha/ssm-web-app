@@ -1,0 +1,14 @@
+.example-card {
+  text-align: center;
+  max-width: 400px;
+}
+.card-title {
+  margin: 20px;
+  color: #2b00c7;
+}
+.main-div {
+  max-width: 400px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

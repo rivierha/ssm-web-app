@@ -1,0 +1,66 @@
+<div class="main-div">
+    <mat-card class="example-card">
+        <mat-card-title class="card-title">Register</mat-card-title>
+        <form class="example-form" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <mat-card-content>
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Enter your name</mat-label>
+                        <input matInput type="text" formControlName="fullName" required>
+                        <button mat-icon-button matSuffix>
+                            <mat-icon>person</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Enter your team</mat-label>
+                        <input matInput type="text" formControlName="team" required>
+                        <button mat-icon-button matSuffix>
+                            <mat-icon>domain</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Enter your email</mat-label>
+                        <input matInput type="text" formControlName="email" required>
+                        <button mat-icon-button matSuffix>
+                            <mat-icon>email</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Enter your password</mat-label>
+                        <input matInput [type]="hide1 ? 'password' : 'text'" formControlName="password" required>
+                        <button mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hide1">
+                            <mat-icon>{{hide1 ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <div>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Confirm password</mat-label>
+                        <input matInput [type]="hide2 ? 'password' : 'text'" formControlName="confirmPassword" required [errorStateMatcher]="matcher">
+                        <button mat-icon-button matSuffix (click)="hide2 = !hide2" [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hide2">
+                            <mat-icon>{{hide2 ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                        <mat-error *ngIf="profileForm.hasError('notSame')">
+                            Passwords do not match
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </mat-card-content>
+            <mat-card-actions>
+                <button mat-raised-button type="submit" color="primary" [disabled]="!profileForm.valid">Submit</button>
+            </mat-card-actions>
+        </form>        
+    </mat-card>
+</div>
