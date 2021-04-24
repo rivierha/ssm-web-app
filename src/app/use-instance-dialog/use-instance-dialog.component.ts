@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
+import { LogsService } from '../services/logs.service';
 
 @Component({
   selector: 'app-use-instance-dialog',
@@ -12,9 +13,12 @@ export class UseInstanceDialogComponent implements OnInit {
   form: FormGroup;
   reason: string;
 
-  constructor(private fb: FormBuilder,
-      private dialogRef: MatDialogRef<UseInstanceDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) data: any) {
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<UseInstanceDialogComponent>,
+    private logsService: LogsService,
+    @Inject(MAT_DIALOG_DATA) data: any
+  ) {
       this.reason = data.description;
   }
 
@@ -25,6 +29,7 @@ export class UseInstanceDialogComponent implements OnInit {
     }
 
   save() {
+    this.logsService.addLog(this.form.value);
         this.dialogRef.close(this.form.value);
   }
 

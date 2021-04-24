@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,6 +6,10 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { CreateInstanceDialogComponent } from '../create-instance-dialog/create-instance-dialog.component';
 import { UseInstanceDialogComponent } from '../use-instance-dialog/use-instance-dialog.component';
 import { Router } from '@angular/router';
+import { Instance } from '../models/instance.model';
+import { InstancesService } from '../services/instances.service';
+import { LogsService } from '../services/logs.service';
+
 
 @Component({
   selector: 'app-instances',
@@ -13,16 +17,31 @@ import { Router } from '@angular/router';
   styleUrls: ['./instances.component.css']
 })
 export class InstancesComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [ 'name', 'status', 'created-at', 'logs', 'action','delete'];
-  dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
 
+  @Input() instances: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  displayedColumns: string[] = [ 'name', 'status', 'created-at', 'logs', 'action','delete'];
+  dataSource = new MatTableDataSource<Instance>(this.instances);
   
-  constructor(private dialog: MatDialog, private router: Router ) {   }
+  
+  constructor(private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<any> {
+    try {
+      let team: any = localStorage.getItem('team');
+      team = JSON.parse(team);
+      await this.instancesService.getAllInstances(team.id).subscribe((res: any) => {
+        console.log("instances", res);
+        this.instances = res;
+        this.dataSource = new MatTableDataSource<Instance>(this.instances);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   ngAfterViewInit() {
@@ -30,16 +49,12 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  redirectToPage(value: any) {
-    console.warn(value, "Redirect called");
-  }
-
-  redirectToLogsPage(value: any) {
-    console.warn(value, "RedirectToLogsPage called");
+  redirectToLogsPage(instance: any) {
+    console.warn(instance, "RedirectToLogsPage called");
     this.router.navigate(['/logs']);
-  }
+  }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
-  public doFilter = (value: string) => {
+  doFilter = (value: string) => {
     this.dataSource.filter = value.trim().toLocaleLowerCase();
   }
 
@@ -48,7 +63,7 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openCreateInstanceDialog() {
+  async openCreateInstanceDialog() {
 
     const dialogConfig = new MatDialogConfig();
 
@@ -60,13 +75,54 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     };
     this.dialog.open(CreateInstanceDialogComponent, dialogConfig);
     const dialogRef = this.dialog.open(CreateInstanceDialogComponent, dialogConfig);
-
     dialogRef.afterClosed().subscribe(
-        data => console.log("Dialog output:", data)
-    );  
+      async (data: any) => {
+        console.log("Dialog output:", data);
+        await this.createNewInstance(data.name);
+      }
+    ); 
+  }
+
+  async deleteInstance(instance: any) {
+    try {
+      await this.instancesService.deleteInstance(instance).subscribe(
+        (res: any) => {
+          console.log("instance-delete", res);
+          this.instances.pop(instance);
+          this.ngOnInit();
+          alert('Instance deleted succesfully!');
+        }
+      );
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+      console.warn(error);
+    }
+  }
+
+  async createNewInstance(instanceName: string): Promise<any> {
+    try {
+      let team: any = localStorage.getItem('team');
+      team = JSON.parse(team);
+      console.log(team);
+      let newInstanceData: any = {
+        name: instanceName,
+        team: team.id
+      }
+      await this.instancesService.addInstance(newInstanceData).subscribe(
+        (res: any) => {
+          console.log("instance", res);
+          this.instances.push(res);
+          this.ngOnInit();
+          alert('Instance created succesfully!');
+        }
+      );
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+      console.warn(error);
+    }
   }
   
-  openUseInstanceDialog() {
+  openUseInstanceDialog(instance: any) {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
@@ -79,37 +135,41 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(UseInstanceDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(
-        data => console.log("Dialog output:", data)
+      async (data: any) => {
+        await this.createInstanceLog(data.reason, instance.id);
+      }
     );  
   }
 
-}
-export interface PeriodicElement {
-  id: number;
-  name: string;
-  status: string;
-  createdAt: Date;
-}
+  async createInstanceLog(reason: string, instanceId: string) {
+    try {
+      let user: any = localStorage.getItem('user');
+      user = JSON.parse(user);
+      console.log(user);
+      let newInstanceLogData: any = {
+        reason: reason,
+        user: user.id,
+        instance: instanceId
+      };
+      await this.logsService.addLog(newInstanceLogData).subscribe(
+        (res: any) => {
+          console.log("log", res);
+          this.ngOnInit();
+          alert('Instance in use!');
+        }
+      )
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+      console.warn(error);
+    }
+    
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {id: 1, name: 'Hydrogen', createdAt: new Date(), status: 'FREE'},
-  {id: 2, name: 'Helium', createdAt: new Date(), status: 'FREE'},
-  {id: 3, name: 'Lithium', createdAt: new Date(), status: 'FREE'},
-  {id: 4, name: 'Beryllium', createdAt: new Date(), status: 'FREE'},
-  {id: 5, name: 'Boron',createdAt: new Date(), status: 'FREE'},
-  {id: 6, name: 'Carbon', createdAt: new Date(),status: 'FREE'},
-  {id: 7, name: 'Nitrogen', createdAt: new Date(), status: 'FREE'},
-  {id: 8, name: 'Oxygen', createdAt: new Date(), status: 'INUSE'},
-  {id: 9, name: 'Fluorine', createdAt: new Date(),status: 'INUSE'},
-  {id: 10, name: 'Neon', createdAt: new Date(), status: 'INUSE'},
-  {id: 11, name: 'Sodium', createdAt: new Date(), status: 'INUSE'},
-  {id: 12, name: 'Magnesium', createdAt: new Date(), status: 'INUSE'},
-  {id: 13, name: 'Aluminum', createdAt: new Date(), status: 'INUSE'},
-  {id: 14, name: 'Silicon', createdAt: new Date(), status: 'INUSE'},
-  {id: 15, name: 'Phosphorus', createdAt: new Date(), status: 'INUSE'},
-  {id: 16, name: 'Sulfur', createdAt: new Date(), status: 'INUSE'},
-  {id: 17, name: 'Chlorine', createdAt: new Date(), status: 'INUSE'},
-  {id: 18, name: 'Argon', createdAt: new Date(), status: 'INUSE'},
-  {id: 19, name: 'Potassium', createdAt: new Date(), status: 'INUSE'},
-  {id: 20, name: 'Calcium', createdAt: new Date(), status: 'INUSE'},
-];
+  }
+
+  getDateFormat(val: string): string {
+    let date = new Date(val);
+    return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear()
+      + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+  }
+
+}

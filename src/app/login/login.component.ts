@@ -3,7 +3,6 @@ import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from '@angular/material/icon';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 const googleLogoURL = 
@@ -47,9 +46,11 @@ export class LoginComponent implements OnInit {
     this.authService.signInPopup("twitter");
   }
 
-  onSubmit() {
-    console.warn(this.userForm.value);
-    this.authService.signInWithEmailPassword(this.userForm.value.email, this.userForm.value.password);
-    this.router.navigate(['/instances']);
+  async onSubmit() {
+    try {
+      await this.authService.signInWithEmailPassword(this.userForm.value.email, this.userForm.value.password);
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+    }
   }
 }

@@ -8,7 +8,6 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const invalidCtrl = !!(control && control.invalid);
     const invalidParent = !!(control && control.parent && control.parent.invalid && control.parent.dirty);
-
     return (invalidCtrl || invalidParent);
   }
 }
@@ -28,29 +27,25 @@ export class SignupComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private authService: AuthService,private router: Router,) {
     this.profileForm = this.formBuilder.group({
       fullName: ['', [Validators.required]],
-      email:['', [Validators.required]],
-      team:['', [Validators.required]],
+      email: ['', [Validators.required]],
       password: ['', [Validators.required]],
-      confirmPassword: [''] 
+      confirmPassword: ['']
     }, {
       validator: this.checkPasswords
-    })
+    });
   }
 
   checkPasswords(group: FormGroup) { // here we have the 'passwords' group
     let pass = group.controls.password.value;
     let confirmPass = group.controls.confirmPassword.value;
-
     return pass === confirmPass ? null : { notSame: true }
   }
 
   ngOnInit(): void {
   }
 
-  onSubmit() {
-    console.warn(this.profileForm.value);
-    this.authService.signUpWithEmailPassword(this.profileForm.value.email, this.profileForm.value.password);
-    this.router.navigate(['/instances']);
+  async onSubmit() {
+    await this.authService.signUpWithEmailPassword(this.profileForm.value.fullName, this.profileForm.value.email, this.profileForm.value.password);
   }
 
 }

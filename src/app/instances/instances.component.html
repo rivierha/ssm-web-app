@@ -13,32 +13,27 @@
 <div style="padding: 20px;">
     <table mat-table [dataSource]="dataSource" matSort>
 
-        <!-- Name Column -->
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
             <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container>
 
-        <!-- Weight Column -->
         <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-            <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.status.id}} </td>
         </ng-container>
 
-        <!-- Symbol Column -->
         <ng-container matColumnDef="created-at">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Created At </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Created at </th>
             <td mat-cell *matCellDef="let element"> 
-                {{element.createdAt.getDate() + ":" + element.createdAt.getMonth() + ":"+ element.createdAt.getFullYear() 
-                + " " + element.createdAt.getHours()+ ":"+ element.createdAt.getMinutes()+ ":" + element.createdAt.getSeconds()
-            }} 
+                {{getDateFormat(element.createdAt)}}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="logs">
             <th mat-header-cell *matHeaderCellDef> Logs </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="primary" matTooltip="View instance logs" (click)="redirectToLogsPage(element.id)">
+                <button mat-icon-button color="primary" matTooltip="View instance logs" (click)="redirectToLogsPage(element)">
                     <mat-icon class="mat-18">timeline</mat-icon>
                 </button>
             </td>
@@ -47,7 +42,7 @@
         <ng-container matColumnDef="action">
             <th mat-header-cell *matHeaderCellDef> Use </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="accent" matTooltip="Use this instance" (click)="redirectToPage(element.id)" [disabled]='element.status == "INUSE" ? true : false' (click)="openUseInstanceDialog()">
+                <button mat-icon-button color="accent" matTooltip="Use this instance" [disabled]='element.status.id == "INUSE" ? true : false' (click)="openUseInstanceDialog(element)">
                     <mat-icon class="mat-18">layers</mat-icon>                    
                 </button>
             </td>
@@ -56,7 +51,7 @@
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" matTooltip="Delete this instance" (click)="redirectToPage(element.id)">
+                <button mat-icon-button color="warn" matTooltip="Delete this instance" [disabled]='element.status.id == "INUSE" ? true : false' (click)="deleteInstance(element)">
                     <mat-icon class="mat-18">delete</mat-icon>
                 </button>
             </td>

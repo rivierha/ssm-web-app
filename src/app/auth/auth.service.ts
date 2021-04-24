@@ -3,6 +3,8 @@ import { Router } from "@angular/router";
 import { AngularFireAuth } from "@angular/fire/auth";
 import firebase from "firebase/app";
 import "firebase/auth";
+import { UsersService } from '../services/users.service';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ import "firebase/auth";
 export class AuthService {
     user: any;
 
-    constructor(public afAuth: AngularFireAuth, public router: Router) { 
+    constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService) { 
         this.afAuth.authState.subscribe(user => {
         if (user){
             this.user = user;
@@ -23,23 +25,49 @@ export class AuthService {
 
     async signInWithEmailPassword(email: string, password: string) {
         try {
+            let data:any = {};
             await firebase.auth().signInWithEmailAndPassword(email, password).then(
-                (userCredentials) => {
-                console.warn("USER - SIGNIN", userCredentials.user);
+                async (userCredentials: any) => {
+                    await this.usersService.getAllUsers(userCredentials.user.email).subscribe(
+                        (res: any) => {
+                            console.log("users", res);
+                            localStorage.setItem('user', JSON.stringify(res[0]));
+                            localStorage.setItem('authenticated', "true");
+                            if (this.user.team == null) 
+                                this.router.navigate(['/teams']);
+                            else 
+                                this.router.navigate(['/instances']);
+
+                        }
+                    );
             })
+            return data;
         } catch (e) {
+            localStorage.setItem('authenticated', "false");
             alert("Error!" + e.message);
         }
     }
 
-    async signUpWithEmailPassword(email: string, password: string) {
+    async signUpWithEmailPassword(name: string, email: string, password: string) {
         try {
-            await firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+            await firebase.auth().createUserWithEmailAndPassword(email, password).then(async (userCredential: any) => {
                 var user = userCredential.user;
-                console.warn("USER - SIGNUP", user);
+                var data: User = {
+                    email: user.email,
+                    name: name
+                }
+                await this.usersService.addUser(data).subscribe(
+                    (res: any) => {
+                        console.log("user", res);
+                        localStorage.setItem('user', JSON.stringify(res.user));
+                        localStorage.setItem('authenticated', "true");
+                        this.router.navigate(['/teams']);
+                    }
+                );
             })
         } catch (e) {
-        alert("Error!" + e.message);
+            localStorage.setItem('authenticated', "false");
+            alert("Error!" + e.message);
         }
     }
     
