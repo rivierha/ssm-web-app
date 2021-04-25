@@ -1,4 +1,9 @@
-<div fxLayout fxLayoutAlign="space-around center">
+
+
+<div fxLayout fxLayoutAlign="space-between center" style="padding: 20px;">
+    <div style="font-size: 40px; font-weight: bold; color: rgb(99, 98, 98);">
+        <mat-icon>developer_board</mat-icon> Instances
+    </div>
     <mat-form-field fxFlex="40%">
         <mat-label>Filter</mat-label>
         <input matInput (keyup)="applyFilter($event)" placeholder="Filter records based on name, status, date" #input>

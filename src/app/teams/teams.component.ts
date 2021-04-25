@@ -46,7 +46,7 @@ export class TeamsComponent implements OnInit {
       await this.usersService.editUser(user).subscribe(
         (res: any) => {
           console.log("user", res);
-          localStorage.setItem('user', JSON.stringify(res));
+          localStorage.setItem('user', JSON.stringify(res.user));
           alert('User updated succesfully!');
           this.router.navigate(['/instances']);
         }

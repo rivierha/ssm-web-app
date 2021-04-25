@@ -9,7 +9,9 @@ import { Router } from '@angular/router';
 import { Instance } from '../models/instance.model';
 import { InstancesService } from '../services/instances.service';
 import { LogsService } from '../services/logs.service';
-
+import {interval} from "rxjs/internal/observable/interval";
+import { Subscription } from 'rxjs';
+import {startWith, switchMap} from "rxjs/operators";
 
 @Component({
   selector: 'app-instances',
@@ -24,24 +26,24 @@ export class InstancesComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = [ 'name', 'status', 'created-at', 'logs', 'action','delete'];
   dataSource = new MatTableDataSource<Instance>(this.instances);
-  
+  timeInterval: Subscription;
   
   constructor(private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
 
   async ngOnInit(): Promise<any> {
-    await this.getAllInstances();
-  }
-
-  async getAllInstances() {
     try {
       let user: any = localStorage.getItem('user');
-      user = JSON.parse(user);
-      await this.instancesService.getAllInstances(user.team.id).subscribe((res: any) => {
-        console.log("instances", res);
-        this.instances = res;
-        this.dataSource = new MatTableDataSource<Instance>(this.instances);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        user = JSON.parse(user);
+        console.log(user);
+      this.timeInterval = interval(5000)
+      .pipe(
+        startWith(0),
+        switchMap(() => this.instancesService.getAllInstances(user.team.id))
+      ).subscribe((res: any) => {
+          this.instances = res;
+          this.dataSource = new MatTableDataSource<Instance>(this.instances);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
       });
     } catch (error) {
       console.error(error);
@@ -174,6 +176,10 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     let date = new Date(val);
     return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear()
       + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+  }
+
+  ngOnDestroy(): void {
+    this.timeInterval.unsubscribe();
   }
 
 }

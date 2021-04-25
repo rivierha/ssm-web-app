@@ -35,6 +35,7 @@ import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-d
 import { LogsComponent } from './logs/logs.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { AlertComponent } from './_alert/alert/alert.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     InstancesComponent,
     CreateInstanceDialogComponent,
     UseInstanceDialogComponent,
-    LogsComponent
+    LogsComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,

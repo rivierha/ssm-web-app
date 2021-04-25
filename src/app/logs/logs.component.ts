@@ -6,6 +6,9 @@ import { Validators, FormControl } from '@angular/forms';
 import { LogsService } from '../services/logs.service';
 import { ActivatedRoute } from '@angular/router';
 import { Log } from '../models/log.model';
+import {interval} from "rxjs/internal/observable/interval";
+import { Subscription } from 'rxjs';
+import {startWith, switchMap} from "rxjs/operators";
 
 @Component({
   selector: 'app-logs',
@@ -20,16 +23,33 @@ export class LogsComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = [ 'reason', 'user', 'start-time', 'end-time', 'total-time', 'delete'];
   dataSource = new MatTableDataSource<Log>(this.logs);
-
   logsControl: FormControl;
+  timeInterval: Subscription;
+
 
   constructor(private logsService: LogsService, private route: ActivatedRoute) { 
     this.logsControl = new FormControl('', Validators.required);
   }
 
-  ngOnInit(): void {
-    this.getAllLogs(100);
-  }
+  async ngOnInit(): Promise<any> {
+    try {
+      const instanceId = this.route.snapshot.paramMap.get('id');
+      console.log(instanceId, "id");
+      this.timeInterval = interval(5000)
+        .pipe(
+          startWith(0),
+          switchMap(() => this.logsService.getAllLogs({ instanceId, time: 100}))
+      ).subscribe((res: any) => {
+        this.logs = res;
+        this.dataSource = new MatTableDataSource<Log>(this.logs);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong. Try Again!');
+    }
+  } 
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
@@ -47,6 +67,7 @@ export class LogsComponent implements OnInit, AfterViewInit {
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       });
+      this.timeInterval.unsubscribe();
     } catch (error) {
       console.error(error);
       alert('Something went wrong. Try Again!');
@@ -87,6 +108,10 @@ export class LogsComponent implements OnInit, AfterViewInit {
     let date = new Date(val);
     return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear()
       + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+  }
+
+  ngOnDestroy(): void {
+    this.timeInterval.unsubscribe();
   }
 
 }

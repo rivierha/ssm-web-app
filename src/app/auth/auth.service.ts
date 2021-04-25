@@ -53,7 +53,7 @@ export class AuthService {
                 await this.usersService.addUser(data).subscribe(
                     (res: any) => {
                         console.log("user", res);
-                        this.user = res;
+                        this.user = res.user;
                         this.loggedIn = true;
                         localStorage.setItem('user', JSON.stringify(res.user));
                         this.router.navigate(['/teams']);
