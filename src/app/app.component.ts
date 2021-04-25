@@ -8,18 +8,11 @@ import { AuthService } from './auth/auth.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'my-app';
+  title = 'SSM';
   constructor(public router: Router, private auth: AuthService) { }
   
-  redirectToLoginPage() {
-  }
-
   logoutUser() {
-    localStorage.removeItem('user');
-    localStorage.removeItem('team');
-    localStorage.setItem('authenticated', "false");
-    this.auth.loggedIn = false;
-    this.auth.user = null;
+    this.auth.signOut();
   }
 
 }

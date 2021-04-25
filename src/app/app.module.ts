@@ -20,7 +20,6 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input';
 import {MatDividerModule} from '@angular/material/divider';
-import { HomeComponent } from './home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { TeamsComponent } from './teams/teams.component';
 import {MatSelectModule} from '@angular/material/select';
@@ -42,7 +41,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     AppComponent,
     SignupComponent,
     LoginComponent,
-    HomeComponent,
     TeamsComponent,
     InstancesComponent,
     CreateInstanceDialogComponent,

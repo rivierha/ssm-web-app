@@ -45,7 +45,12 @@ export class SignupComponent implements OnInit {
   }
 
   async onSubmit() {
-    await this.authService.signUpWithEmailPassword(this.profileForm.value.fullName, this.profileForm.value.email, this.profileForm.value.password);
+    try {
+      await this.authService.signUpWithEmailPassword(this.profileForm.value.fullName, this.profileForm.value.email, this.profileForm.value.password);
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+      console.error(error);
+    }
   }
 
 }

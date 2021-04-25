@@ -23,13 +23,18 @@ export class TeamsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<any> {
+    await this.getAllTeams();
+  }
+
+  async getAllTeams() {
     try {
       await this.teamsService.getAllTeams().subscribe((res: any) => {
         console.log("team", res);
         this.teams = res;
       });
     } catch (error) {
-      console.error(error)
+      alert('Something went wrong. Try Again!');
+      console.error(error);
     }
   }
 
@@ -38,11 +43,10 @@ export class TeamsComponent implements OnInit {
       let user: any = localStorage.getItem('user');
       user = JSON.parse(user);
       user.team = this.selectedValue.id;
-      console.log(user, " F ");
       await this.usersService.editUser(user).subscribe(
         (res: any) => {
           console.log("user", res);
-          localStorage.setItem('team', JSON.stringify(this.selectedValue));
+          localStorage.setItem('user', JSON.stringify(res));
           alert('User updated succesfully!');
           this.router.navigate(['/instances']);
         }

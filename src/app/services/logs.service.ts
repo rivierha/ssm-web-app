@@ -25,7 +25,8 @@ export class LogsService {
 
   getAllLogs(args: any): Observable<Log> {
     let params = new HttpParams();
-    params = params.append('instance', args);
+    params = params.append('instance', args.instanceId);
+    params = params.append('totalTime', args.time);
     return this.http.get<Log>(`${this.url}`, {params: params});
   }
 

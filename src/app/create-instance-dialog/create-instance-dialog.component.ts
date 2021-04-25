@@ -34,26 +34,4 @@ export class CreateInstanceDialogComponent implements OnInit {
   close() {
       this.dialogRef.close();
   }
-
-  // async createNewInstance(instanceName: string): Promise<any> {
-  //   try {
-  //     let team: any = localStorage.getItem('team');
-  //     team = JSON.parse(team);
-  //     console.log(team);
-  //     let newInstanceData: any = {
-  //       name: instanceName,
-  //       team: team.id
-  //     }
-  //     await this.instancesService.addInstance(newInstanceData).subscribe(
-  //       (res: any) => {
-  //         console.log("instance", res);
-  //         this.ngOnInit();
-  //         alert('Instance created succesfully!');
-  //       }
-  //     );
-  //   } catch (error) {
-  //     alert('Something went wrong. Try Again!');
-  //     console.warn(error);
-  //   }
-  // }
 }

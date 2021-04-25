@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/cor
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Validators, FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { Validators, FormControl } from '@angular/forms';
 import { LogsService } from '../services/logs.service';
 import { ActivatedRoute } from '@angular/router';
 import { Log } from '../models/log.model';
@@ -28,14 +28,19 @@ export class LogsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.getAllLogs();
+    this.getAllLogs(100);
   }
 
-  async getAllLogs() {
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
+  async getAllLogs(time: number) {
     try {
-      const id = this.route.snapshot.paramMap.get('id');
-      console.log(id, "id");
-      await this.logsService.getAllLogs(id).subscribe((res: any) => {
+      const instanceId = this.route.snapshot.paramMap.get('id');
+      console.log(instanceId, "id");
+      await this.logsService.getAllLogs({instanceId, time}).subscribe((res: any) => {
         console.log("logs", res);
         this.logs = res;
         this.dataSource = new MatTableDataSource<Log>(this.logs);
@@ -44,13 +49,8 @@ export class LogsComponent implements OnInit, AfterViewInit {
       });
     } catch (error) {
       console.error(error);
+      alert('Something went wrong. Try Again!');
     }
-  }
-
-
-  ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
   }
 
   async deleteLog(value: any) {
@@ -80,6 +80,7 @@ export class LogsComponent implements OnInit, AfterViewInit {
 
   getLogs() {
     console.warn(this.logsControl.value);
+    this.getAllLogs(this.logsControl.value);
   }
 
   getDateFormat(val: string): string {

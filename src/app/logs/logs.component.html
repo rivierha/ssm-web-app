@@ -42,13 +42,13 @@
         <ng-container matColumnDef="end-time">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> End time </th>
             <td mat-cell *matCellDef="let element">
-                {{getDateFormat(element.endTime)}}
+                {{element.totalTime == 0 ? "-" : getDateFormat(element.endTime)}}
             </td>
         </ng-container>
         
         <ng-container matColumnDef="total-time">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Total time(mins) </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalTime == 0 ? "-- (In use)" : element.totalTime}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.totalTime == 0 ? "-" : element.totalTime}} </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">

@@ -23,17 +23,17 @@ export class UseInstanceDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-        this.form = this.fb.group({
-            reason: ['', [Validators.required]],
-        });
-    }
+    this.form = this.fb.group({
+        reason: ['', [Validators.required]],
+    });
+  }
 
   save() {
     this.logsService.addLog(this.form.value);
-        this.dialogRef.close(this.form.value);
+    this.dialogRef.close(this.form.value);
   }
 
   close() {
-      this.dialogRef.close();
+    this.dialogRef.close();
   }
 }

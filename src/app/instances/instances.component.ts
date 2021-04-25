@@ -29,10 +29,14 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   constructor(private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
 
   async ngOnInit(): Promise<any> {
+    await this.getAllInstances();
+  }
+
+  async getAllInstances() {
     try {
-      let team: any = localStorage.getItem('team');
-      team = JSON.parse(team);
-      await this.instancesService.getAllInstances(team.id).subscribe((res: any) => {
+      let user: any = localStorage.getItem('user');
+      user = JSON.parse(user);
+      await this.instancesService.getAllInstances(user.team.id).subscribe((res: any) => {
         console.log("instances", res);
         this.instances = res;
         this.dataSource = new MatTableDataSource<Instance>(this.instances);
@@ -40,7 +44,8 @@ export class InstancesComponent implements OnInit, AfterViewInit {
         this.dataSource.paginator = this.paginator;
       });
     } catch (error) {
-      console.error(error)
+      console.error(error);
+      alert('Something went wrong. Try Again!');
     }
   }
 
@@ -64,9 +69,7 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   }
 
   async openCreateInstanceDialog() {
-
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
@@ -78,7 +81,8 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(
       async (data: any) => {
         console.log("Dialog output:", data);
-        await this.createNewInstance(data.name);
+        if(data.name)
+          await this.createNewInstance(data.name);
       }
     ); 
   }
@@ -101,12 +105,12 @@ export class InstancesComponent implements OnInit, AfterViewInit {
 
   async createNewInstance(instanceName: string): Promise<any> {
     try {
-      let team: any = localStorage.getItem('team');
-      team = JSON.parse(team);
-      console.log(team);
+      let user: any = localStorage.getItem('user');
+      user = JSON.parse(user);
+      console.log(user);
       let newInstanceData: any = {
         name: instanceName,
-        team: team.id
+        team: user.team.id
       }
       await this.instancesService.addInstance(newInstanceData).subscribe(
         (res: any) => {
@@ -124,7 +128,6 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   
   openUseInstanceDialog(instance: any) {
     const dialogConfig = new MatDialogConfig();
-
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.data = {
@@ -136,7 +139,8 @@ export class InstancesComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(
       async (data: any) => {
-        await this.createInstanceLog(data.reason, instance.id);
+        if(data.reason)
+          await this.createInstanceLog(data.reason, instance.id);
       }
     );  
   }

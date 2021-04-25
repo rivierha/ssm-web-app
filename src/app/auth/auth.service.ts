@@ -11,17 +11,9 @@ import { User } from '../models/user.model';
 })
 export class AuthService {
     user: any;
-    loggedIn = false;
+    loggedIn = localStorage.getItem('user') ? true: false;
     
     constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService) { 
-        this.afAuth.authState.subscribe(user => {
-        if (user){
-            this.user = user;
-            localStorage.setItem('user', JSON.stringify(this.user));
-        } else {
-            localStorage.setItem('user', "");
-        }
-        })
     } 
 
     async signInWithEmailPassword(email: string, password: string) {
@@ -31,15 +23,11 @@ export class AuthService {
                 async (userCredentials: any) => {
                     await this.usersService.getAllUsers(userCredentials.user.email).subscribe(
                         (res: any) => {
-                            console.log("users", res);
-                            let user: any = res[0];
-                            this.user = user;
-                            localStorage.setItem('user', JSON.stringify(user));
-                            localStorage.setItem('authenticated', "true");
-                            console.log(user.team);
+                            this.user = res[0];
                             this.loggedIn = true;
-                            if (user.team != null) {
-                                localStorage.setItem('team', JSON.stringify(user.team));
+                            localStorage.setItem('user', JSON.stringify(this.user));
+                            
+                            if (this.user.team != null) {
                                 this.router.navigate(['/instances']);
                             }   
                             else {   
@@ -50,7 +38,6 @@ export class AuthService {
             })
             return data;
         } catch (e) {
-            localStorage.setItem('authenticated', "false");
             alert("Error!" + e.message);
         }
     }
@@ -66,14 +53,14 @@ export class AuthService {
                 await this.usersService.addUser(data).subscribe(
                     (res: any) => {
                         console.log("user", res);
+                        this.user = res;
+                        this.loggedIn = true;
                         localStorage.setItem('user', JSON.stringify(res.user));
-                        localStorage.setItem('authenticated', "true");
                         this.router.navigate(['/teams']);
                     }
                 );
             })
         } catch (e) {
-            localStorage.setItem('authenticated', "false");
             alert("Error!" + e.message);
         }
     }
@@ -144,6 +131,17 @@ export class AuthService {
     //     }
     // }
 
+    async signOut() {
+        try {
+            await firebase.auth().signOut().then(() => {
+                this.user = null;
+                this.loggedIn = false;
+                localStorage.removeItem('user');
+            });
+        } catch (error) {
+             alert("Error!" + error.message);
+        }
+    }
 
     
 }
