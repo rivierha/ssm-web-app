@@ -1,23 +1,23 @@
 <div class="main-div">
     <mat-card class="example-card">
         <mat-card-title class="card-title">Login</mat-card-title>
-        
+
         <form class="example-form" [formGroup]="userForm" (ngSubmit)="onSubmit()">
             <mat-card-content>
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Enter your email</mat-label>
-                        <input matInput type="text" formControlName="email" required>
+                        <input matInput type="text" formControlName="email" required />
                         <button mat-icon-button matSuffix>
                             <mat-icon>email</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                
+
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Enter your password</mat-label>
-                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required />
                         <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                             [attr.aria-pressed]="hide">
                             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -31,7 +31,7 @@
         </form>
         <p>or</p>
         <button mat-button style="padding: 1rem;" (click)="googleLogin()">
-            <mat-icon style="width: 50px; height:30px" svgIcon="logo"></mat-icon> Login With Google
+            <mat-icon style="width: 50px; height: 30px;" svgIcon="logo"></mat-icon> Login With Google
         </button>
         <!-- <button type="button" (click)="facebookLogin()">
             Log in with Facebook

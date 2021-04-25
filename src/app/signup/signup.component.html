@@ -6,27 +6,27 @@
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Enter your name</mat-label>
-                        <input matInput type="text" formControlName="fullName" required>
+                        <input matInput type="text" formControlName="fullName" required />
                         <button mat-icon-button matSuffix>
                             <mat-icon>person</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                
+
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Enter your email</mat-label>
-                        <input matInput type="text" formControlName="email" required>
+                        <input matInput type="text" formControlName="email" required />
                         <button mat-icon-button matSuffix>
                             <mat-icon>email</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                
+
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Enter your password</mat-label>
-                        <input matInput [type]="hide1 ? 'password' : 'text'" formControlName="password" required>
+                        <input matInput [type]="hide1 ? 'password' : 'text'" formControlName="password" required />
                         <button mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="'Hide password'"
                             [attr.aria-pressed]="hide1">
                             <mat-icon>{{hide1 ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -37,7 +37,8 @@
                 <div>
                     <mat-form-field appearance="fill">
                         <mat-label>Confirm password</mat-label>
-                        <input matInput [type]="hide2 ? 'password' : 'text'" formControlName="confirmPassword" required [errorStateMatcher]="matcher">
+                        <input matInput [type]="hide2 ? 'password' : 'text'" formControlName="confirmPassword" required
+                            [errorStateMatcher]="matcher" />
                         <button mat-icon-button matSuffix (click)="hide2 = !hide2" [attr.aria-label]="'Hide password'"
                             [attr.aria-pressed]="hide2">
                             <mat-icon>{{hide2 ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -51,6 +52,6 @@
             <mat-card-actions>
                 <button mat-raised-button type="submit" color="primary" [disabled]="!profileForm.valid">Submit</button>
             </mat-card-actions>
-        </form>        
+        </form>
     </mat-card>
 </div>

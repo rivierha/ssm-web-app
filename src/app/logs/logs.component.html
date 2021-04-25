@@ -7,8 +7,8 @@
         Enter max possible past usage value(in seconds):
         <mat-form-field fxFlex="60%">
             <mat-label>Max time</mat-label>
-            <input matInput type="number" [formControl]="logsControl" required>
-            <button mat-icon-button matSuffix >
+            <input matInput type="number" [formControl]="logsControl" required />
+            <button mat-icon-button matSuffix>
                 <mat-icon>timelapse</mat-icon>
             </button>
         </mat-form-field>
@@ -19,46 +19,50 @@
 
     <mat-form-field fxFlex="20%">
         <mat-label>Filter table</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Filter records based on reason, user, date, time" #input>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter records based on reason, user, date, time"
+            #input />
     </mat-form-field>
 </div>
 
 <div style="padding: 20px;">
+    <!-- <div style="font-size: x-large; left: 50%; align-content: center;" *ngIf="dataSource.data.length === 0">No records found</div> -->
     <table mat-table [dataSource]="dataSource" matSort>
+        
 
         <ng-container matColumnDef="reason">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Reason to use </th>
-            <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Reason to use</th>
+            <td mat-cell *matCellDef="let element">{{element.reason}}</td>
         </ng-container>
 
         <ng-container matColumnDef="user">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
-            <td mat-cell *matCellDef="let element"> {{element.user.name}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>User</th>
+            <td mat-cell *matCellDef="let element">{{element.user.name}}</td>
         </ng-container>
 
         <ng-container matColumnDef="start-time">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Start time </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Start time</th>
             <td mat-cell *matCellDef="let element">
                 {{getDateFormat(element.startTime)}}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="end-time">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> End time </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>End time</th>
             <td mat-cell *matCellDef="let element">
                 {{element.totalTime == 0 ? "-" : getDateFormat(element.endTime)}}
             </td>
         </ng-container>
-        
+
         <ng-container matColumnDef="total-time">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header> Total time(seconds) </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalTime == 0 ? "-" : element.totalTime}} </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total time(seconds)</th>
+            <td mat-cell *matCellDef="let element">{{element.totalTime == 0 ? "-" : element.totalTime}}</td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
-            <th mat-header-cell *matHeaderCellDef> Delete </th>
+            <th mat-header-cell *matHeaderCellDef>Delete</th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" matTooltip="Delete log" (click)="deleteLog(element)" [disabled]='element.totalTime == 0 ? true : false'>
+                <button mat-icon-button color="warn" matTooltip="Delete log" (click)="deleteLog(element)"
+                    [disabled]="element.totalTime == 0 ? true : false">
                     <mat-icon class="mat-18">delete</mat-icon>
                 </button>
             </td>

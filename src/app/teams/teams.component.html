@@ -30,16 +30,16 @@
             <h4 style="color: rgb(9, 9, 194); margin-top: 30px;">Team not in list?</h4>
             <mat-expansion-panel style="margin: 10px;">
                 <mat-expansion-panel-header>
-                    <mat-panel-description >
+                    <mat-panel-description>
                         Add new team
                     </mat-panel-description>
                 </mat-expansion-panel-header>
                 <form (ngSubmit)="createTeam()">
                     <mat-form-field>
                         <mat-label>Name</mat-label>
-                        <input matInput [formControl]="newTeamForm" required placeholder="Enter team name">
+                        <input matInput [formControl]="newTeamForm" required placeholder="Enter team name" />
                     </mat-form-field>
-            
+
                     <button mat-icon-button type="submit" color="primary" [disabled]="!newTeamForm.valid">
                         <mat-icon>add</mat-icon>
                     </button>

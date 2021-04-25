@@ -19,36 +19,33 @@ import { AlertService } from '../alert';
   templateUrl: './instances.component.html',
   styleUrls: ['./instances.component.css']
 })
+  
 export class InstancesComponent implements OnInit, AfterViewInit {
 
   @Input() instances: any = [];
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = [ 'name', 'status', 'created-at', 'logs', 'action','delete'];
-  dataSource = new MatTableDataSource<Instance>(this.instances);
+  displayedColumns: string[] = ['name', 'status', 'createdAt', 'logs', 'action', 'delete'];
+  dataSource = new MatTableDataSource < Instance > (this.instances);
   timeInterval: Subscription;
-  options = {
-        autoClose: true,
-        keepAfterRouteChange: true
-    };
-  constructor(public alertService: AlertService, private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
+ 
+  constructor(public alertService: AlertService, private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService) {}
 
-  async ngOnInit(): Promise<any> {
+  async ngOnInit(): Promise < any > {
     try {
       let user: any = localStorage.getItem('user');
-        user = JSON.parse(user);
-        console.log(user);
+      user = JSON.parse(user);
       this.timeInterval = interval(5000)
-      .pipe(
-        startWith(0),
-        switchMap(() => this.instancesService.getAllInstances(user.team.id))
-      ).subscribe((res: any) => {
+        .pipe(
+          startWith(0),
+          switchMap(() => this.instancesService.getAllInstances(user.team.id))
+        ).subscribe((res: any) => {
           this.instances = res;
-          this.dataSource = new MatTableDataSource<Instance>(this.instances);
+          this.dataSource = new MatTableDataSource < Instance > (this.instances);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
-      });
+        });
     } catch (error) {
       console.error(error);
       this.alertService.error('Something went wrong. Try Again!', {
@@ -64,17 +61,13 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   }
 
   redirectToLogsPage(instance: any) {
-    console.warn(instance, "RedirectToLogsPage called");
-    this.router.navigate([`/logs/${instance.id}`]);                                                                                                                        
-  }
-
-  doFilter = (value: string) => {
-    this.dataSource.filter = value.trim().toLocaleLowerCase();
+    this.router.navigate([`/logs/${instance.id}`]);
   }
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.timeInterval.unsubscribe();
   }
 
   async openCreateInstanceDialog() {
@@ -89,18 +82,16 @@ export class InstancesComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(CreateInstanceDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(
       async (data: any) => {
-        console.log("Dialog output:", data);
-        if(data.name)
+        if (data.name)
           await this.createNewInstance(data.name);
       }
-    ); 
+    );
   }
 
   async deleteInstance(instance: any) {
     try {
       await this.instancesService.deleteInstance(instance).subscribe(
         (res: any) => {
-          console.log("instance-delete", res);
           this.instances.pop(instance);
           this.ngOnInit();
           this.alertService.success('Instance successfully deleted!', {
@@ -111,25 +102,23 @@ export class InstancesComponent implements OnInit, AfterViewInit {
       );
     } catch (error) {
       this.alertService.error('Something went wrong. Try Again!', {
-            autoClose: true,
-            keepAfterRouteChange: true
+        autoClose: true,
+        keepAfterRouteChange: true
       });
-      console.warn(error);
+      console.error(error);
     }
   }
 
-  async createNewInstance(instanceName: string): Promise<any> {
+  async createNewInstance(instanceName: string): Promise < any > {
     try {
       let user: any = localStorage.getItem('user');
       user = JSON.parse(user);
-      console.log(user);
       let newInstanceData: any = {
         name: instanceName,
         team: user.team.id
       }
       await this.instancesService.addInstance(newInstanceData).subscribe(
         (res: any) => {
-          console.log("instance", res);
           this.instances.push(res);
           this.ngOnInit();
           this.alertService.success('Instance successfully created!', {
@@ -140,13 +129,13 @@ export class InstancesComponent implements OnInit, AfterViewInit {
       );
     } catch (error) {
       this.alertService.error('Something went wrong. Try Again!', {
-            autoClose: true,
-            keepAfterRouteChange: true
+        autoClose: true,
+        keepAfterRouteChange: true
       });
-      console.warn(error);
+      console.error(error);
     }
   }
-  
+
   openUseInstanceDialog(instance: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
@@ -160,17 +149,16 @@ export class InstancesComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(
       async (data: any) => {
-        if(data.reason)
+        if (data.reason)
           await this.createInstanceLog(data.reason, instance.id);
       }
-    );  
+    );
   }
 
   async createInstanceLog(reason: string, instanceId: string) {
     try {
       let user: any = localStorage.getItem('user');
       user = JSON.parse(user);
-      console.log(user);
       let newInstanceLogData: any = {
         reason: reason,
         user: user.id,
@@ -178,7 +166,6 @@ export class InstancesComponent implements OnInit, AfterViewInit {
       };
       await this.logsService.addLog(newInstanceLogData).subscribe(
         (res: any) => {
-          console.log("log", res);
           this.ngOnInit();
           this.alertService.info('Instance in-use!', {
             autoClose: true,
@@ -188,19 +175,19 @@ export class InstancesComponent implements OnInit, AfterViewInit {
       )
     } catch (error) {
       this.alertService.error('Something went wrong. Try Again!', {
-            autoClose: true,
-            keepAfterRouteChange: true
+        autoClose: true,
+        keepAfterRouteChange: true
       });
-      console.warn(error);
+      console.error(error);
     }
-    
+
 
   }
 
   getDateFormat(val: string): string {
     let date = new Date(val);
-    return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear()
-      + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear() +
+      " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
   }
 
   ngOnDestroy(): void {
