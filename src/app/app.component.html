@@ -314,8 +314,8 @@
   />
   <span style="font-size: medium;">Welcome</span>
   <div class="spacer"></div>
-  <button mat-button style="font-weight: bold; font-size: medium; margin: 10px;" [routerLink]="['/login']" *ngIf="router.url == '/signup'">Login</button>
-  <button mat-button style="font-weight: bold; font-size: medium; margin: 10px;" [routerLink]="['/login']" *ngIf="router.url != '/signup' && router.url != '/login'" >Logout</button>
+  <button mat-button style="font-weight: bold; font-size: medium; margin: 10px;" [routerLink]="['/login']" *ngIf="router.url == '/signup'" (click)=(redirectToLoginPage())>Login</button>
+  <button mat-button style="font-weight: bold; font-size: medium; margin: 10px;" [routerLink]="['/login']" *ngIf="router.url != '/signup' && router.url != '/login'" (click)=(logoutUser())>Logout</button>
 </div>
 
 <div class="content" role="main">

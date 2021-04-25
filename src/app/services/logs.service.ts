@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Log } from '../models/log.model';
 import { environment } from '../../environments/environment';
+import { HttpParams } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,12 @@ export class LogsService {
 
   getLog(log: Log): Observable<Log> {
     return this.http.get<Log>(`${this.url}/${log.id}`);
+  }
+
+  getAllLogs(args: any): Observable<Log> {
+    let params = new HttpParams();
+    params = params.append('instance', args);
+    return this.http.get<Log>(`${this.url}`, {params: params});
   }
 
   editLog(log: Log): Observable<any> {

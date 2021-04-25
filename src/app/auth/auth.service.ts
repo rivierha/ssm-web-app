@@ -11,7 +11,8 @@ import { User } from '../models/user.model';
 })
 export class AuthService {
     user: any;
-
+    loggedIn = false;
+    
     constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService) { 
         this.afAuth.authState.subscribe(user => {
         if (user){
@@ -31,13 +32,19 @@ export class AuthService {
                     await this.usersService.getAllUsers(userCredentials.user.email).subscribe(
                         (res: any) => {
                             console.log("users", res);
-                            localStorage.setItem('user', JSON.stringify(res[0]));
+                            let user: any = res[0];
+                            this.user = user;
+                            localStorage.setItem('user', JSON.stringify(user));
                             localStorage.setItem('authenticated', "true");
-                            if (this.user.team == null) 
-                                this.router.navigate(['/teams']);
-                            else 
+                            console.log(user.team);
+                            this.loggedIn = true;
+                            if (user.team != null) {
+                                localStorage.setItem('team', JSON.stringify(user.team));
                                 this.router.navigate(['/instances']);
-
+                            }   
+                            else {   
+                                this.router.navigate(['/teams']);
+                            }
                         }
                     );
             })
@@ -136,7 +143,6 @@ export class AuthService {
     //         alert("Error!" + e.message);
     //     }
     // }
-
 
 
     

@@ -1,8 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Validators, FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { LogsService } from '../services/logs.service';
+import { ActivatedRoute } from '@angular/router';
+import { Log } from '../models/log.model';
 
 @Component({
   selector: 'app-logs',
@@ -11,28 +14,59 @@ import { Validators, FormGroup, FormBuilder, FormControl } from '@angular/forms'
 })
 export class LogsComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = [ 'reason', 'user', 'start-time', 'end-time', 'total-time', 'delete'];
-  dataSource = new MatTableDataSource<Logs>(LOG_DATA);
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @Input() logs: any = [];
+
+  displayedColumns: string[] = [ 'reason', 'user', 'start-time', 'end-time', 'total-time', 'delete'];
+  dataSource = new MatTableDataSource<Log>(this.logs);
 
   logsControl: FormControl;
 
-  constructor() { 
+  constructor(private logsService: LogsService, private route: ActivatedRoute) { 
     this.logsControl = new FormControl('', Validators.required);
   }
 
   ngOnInit(): void {
+    this.getAllLogs();
   }
+
+  async getAllLogs() {
+    try {
+      const id = this.route.snapshot.paramMap.get('id');
+      console.log(id, "id");
+      await this.logsService.getAllLogs(id).subscribe((res: any) => {
+        console.log("logs", res);
+        this.logs = res;
+        this.dataSource = new MatTableDataSource<Log>(this.logs);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
   }
 
-  redirectToPage(value: any) {
-    console.warn(value, "Redirect called");
+  async deleteLog(value: any) {
+    try {
+      await this.logsService.deleteLog(value).subscribe(
+        (res: any) => {
+          console.log("log-delete", res);
+          this.logs.pop(value);
+          this.ngOnInit();
+          alert('Instance log deleted succesfully!');
+        }
+      );
+    } catch (error) {
+      alert('Something went wrong. Try Again!');
+      console.warn(error);
+    }
   }
 
   public doFilter = (value: string) => {
@@ -48,37 +82,10 @@ export class LogsComponent implements OnInit, AfterViewInit {
     console.warn(this.logsControl.value);
   }
 
-}
+  getDateFormat(val: string): string {
+    let date = new Date(val);
+    return date.getDate() + ":" + date.getMonth() + ":" + date.getFullYear()
+      + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+  }
 
-export interface Logs {
-  id: number;
-  reason: string;
-  user: {};
-  startTime: Date;
-  endTime: Date;
-  totalTime: number;
-  createdAt: Date;
 }
-
-const LOG_DATA: Logs[] = [
-  {id: 1, reason: 'Hydrogen', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 2, reason: 'Helium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 3, reason: 'Lithium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 4, reason: 'Beryllium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 5, reason: 'Boron',createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 6, reason: 'Carbon', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 7, reason: 'Nitrogen', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 8, reason: 'Oxygen', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 9, reason: 'Fluorine', createdAt: new Date(),user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 10, reason: 'Neon', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 11, reason: 'Sodium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 12, reason: 'Magnesium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 13, reason: 'Aluminum', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 14, reason: 'Silicon', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 15, reason: 'Phosphorus', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 16, reason: 'Sulfur', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 17, reason: 'Chlorine', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 18, reason: 'Argon', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  {id: 19, reason: 'Potassium', createdAt: new Date(), user: { name: 'ABC'}, startTime: new Date(), endTime: new Date(), totalTime: 5},
-  { id: 20, reason: 'Calcium', createdAt: new Date(), user: { name: 'ABC' }, startTime: new Date(), endTime: new Date(), totalTime: 5 }
-]

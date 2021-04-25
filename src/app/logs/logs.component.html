@@ -22,46 +22,39 @@
 <div style="padding: 20px;">
     <table mat-table [dataSource]="dataSource" matSort>
 
-        <!-- Name Column -->
         <ng-container matColumnDef="reason">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Reason to use </th>
             <td mat-cell *matCellDef="let element"> {{element.reason}} </td>
         </ng-container>
 
-        <!-- Weight Column -->
         <ng-container matColumnDef="user">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> User </th>
             <td mat-cell *matCellDef="let element"> {{element.user.name}} </td>
         </ng-container>
 
-        <!-- Symbol Column -->
         <ng-container matColumnDef="start-time">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Start time </th>
             <td mat-cell *matCellDef="let element">
-                {{element.startTime.getDate() + ":" + element.startTime.getMonth() + ":"+ element.startTime.getFullYear() 
-                + " " + element.startTime.getHours()+ ":"+ element.startTime.getMinutes()+ ":" + element.startTime.getSeconds()
-            }}
+                {{getDateFormat(element.startTime)}}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="end-time">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> End time </th>
             <td mat-cell *matCellDef="let element">
-                {{element.endTime.getDate() + ":" + element.endTime.getMonth() + ":"+ element.endTime.getFullYear() 
-                        + " " + element.endTime.getHours()+ ":"+ element.endTime.getMinutes()+ ":" + element.endTime.getSeconds()
-                    }}
+                {{getDateFormat(element.endTime)}}
             </td>
         </ng-container>
         
         <ng-container matColumnDef="total-time">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Total time(mins) </th>
-            <td mat-cell *matCellDef="let element"> {{element.totalTime}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.totalTime == 0 ? "-- (In use)" : element.totalTime}} </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
             <th mat-header-cell *matHeaderCellDef> Delete </th>
             <td mat-cell *matCellDef="let element">
-                <button mat-icon-button color="warn" matTooltip="Delete log" (click)="redirectToPage(element.id)">
+                <button mat-icon-button color="warn" matTooltip="Delete log" (click)="deleteLog(element)" [disabled]='element.totalTime == 0 ? true : false'>
                     <mat-icon class="mat-18">delete</mat-icon>
                 </button>
             </td>

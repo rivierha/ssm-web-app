@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,17 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   title = 'my-app';
-  constructor(public router: Router) {}
+  constructor(public router: Router, private auth: AuthService) { }
+  
+  redirectToLoginPage() {
+  }
+
+  logoutUser() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('team');
+    localStorage.setItem('authenticated', "false");
+    this.auth.loggedIn = false;
+    this.auth.user = null;
+  }
+
 }
