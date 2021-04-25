@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from "@angular/router";
 import { AngularFireAuth } from "@angular/fire/auth";
 import firebase from "firebase/app";
@@ -14,29 +14,47 @@ export class AuthService {
     user: any;
     loggedIn = localStorage.getItem('user') ? true: false;
     
-    constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService, private alertService: AlertService) { 
+    constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService, private alertService: AlertService, private ngZone: NgZone) { 
     } 
 
     async signInWithEmailPassword(email: string, password: string) {
         try {
-            let data:any = {};
             await firebase.auth().signInWithEmailAndPassword(email, password).then(
                 async (userCredentials: any) => {
-                    await this.usersService.getAllUsers(userCredentials.user.email).subscribe(
-                        (res: any) => {
-                            this.user = res[0];
-                            this.loggedIn = true;
-                            localStorage.setItem('user', JSON.stringify(this.user));
-                            if (this.user.team != null) {
-                                this.router.navigate(['/instances']);
-                            }   
-                            else {   
-                                this.router.navigate(['/teams']);
-                            }
+                    
+                    if (userCredentials.user.emailVerified !== true) {
+                        this.alertService.warn('Please validate your email address to proceed. Kindly check your inbox.', {
+                            autoClose: false,
+                            keepAfterRouteChange: true
+                        });
+                    } else {
+                        var user = userCredentials.user;
+                        var data: User = {
+                            email: user.email,
                         }
+                        await this.usersService.getAllUsers(data.email).subscribe(
+                            (res: any) => {
+                                if (res.length == 0)
+                                    this.addUserToDB(data);
+                                else {
+                                    this.user = res[0];
+                                    this.loggedIn = true;
+                                    localStorage.setItem('user', JSON.stringify(this.user));
+                                    if (this.user.team != null) {
+                                        this.ngZone.run(() => {
+                                            this.router.navigate(['/instances']);
+                                        });
+                                    }   
+                                    else {   
+                                        this.ngZone.run(() => {
+                                            this.router.navigate(['/teams']);
+                                        });
+                                    }
+                                }
+                            }
                     );
+                }
             })
-            return data;
         } catch (error) {
             this.alertService.error('Incorrect email or password. Try again!', {
                 autoClose: true,
@@ -54,19 +72,7 @@ export class AuthService {
                     email: user.email,
                     name: name
                 }
-                await this.usersService.addUser(data).subscribe(
-                    (res: any) => {
-                        console.log("user", res);
-                        this.user = res.user;
-                        this.loggedIn = true;
-                        localStorage.setItem('user', JSON.stringify(res.user));
-                        this.alertService.success('Successfully registed!', {
-                            autoClose: true,
-                            keepAfterRouteChange: true
-                        });
-                        this.router.navigate(['/teams']);
-                    }
-                );
+                this.SendVerificationMail();
             })
         } catch (error) {
             this.alertService.error(error.message, {
@@ -75,6 +81,22 @@ export class AuthService {
             });
             console.log(error.message);
         }
+    }
+
+    async addUserToDB(data: User) {
+        await this.usersService.addUser(data).subscribe(
+            (res: any) => {
+                console.log("user", res);
+                this.user = res.user;
+                this.loggedIn = true;
+                localStorage.setItem('user', JSON.stringify(res.user));
+                this.alertService.success('Successfully registed!', {
+                    autoClose: true,
+                    keepAfterRouteChange: true
+                });
+                this.router.navigate(['/teams']);
+            }
+        );
     }
     
     async signInPopup(source: String) {
@@ -93,12 +115,36 @@ export class AuthService {
                 provider = new firebase.auth.TwitterAuthProvider()
             } 
 
-            await firebase.auth().signInWithPopup(provider).then((result: any) => {
-                var credential = result.credential;
-                var token = credential.accessToken;
-                console.log("TOKEN", token);
+            await firebase.auth().signInWithPopup(provider).then(async (result: any) => {
                 var user = result.user;
-                console.log(source + " Sign In", user);
+                var data: User = {
+                    email: user.email,
+                    name: user.displayName
+                }
+                console.log(data);
+                await this.usersService.getAllUsers(data.email).subscribe(
+                    (res: any) => {
+                        console.log(res);
+                        if (res.length == 0)
+                            this.addUserToDB(data);
+                        else {
+                            this.user = res[0];
+                            this.loggedIn = true;
+                            localStorage.setItem('user', JSON.stringify(this.user));
+                            if (this.user.team != null) {
+                                this.ngZone.run(() => {
+                                    this.router.navigate(['/instances']);
+                                });
+                            }   
+                            else {   
+                                this.ngZone.run(() => {
+                                    this.router.navigate(['/teams']);
+                                });
+                            }
+                        }
+                    }
+                );
+                console.log(source + " Sign In", data);
             });
         } catch (error) {
             this.alertService.error('Something went wrong. Try Again!', {
@@ -109,43 +155,15 @@ export class AuthService {
         }
     }    
 
-    // async handleMultipleSingleAccount() {
-    //     try {
-    //         var repo = new MyUserDataRepo();
-    // https://firebase.google.com/docs/auth/web/account-linking#:~:text=You%20can%20allow%20users%20to,they%20used%20to%20sign%20in.
-    //         // Get reference to the currently signed-in user
-    //         var prevUser = auth.currentUser;
-
-    //         // Get the data which you will want to merge. This should be done now
-    //         // while the app is still signed in as this user.
-    //         var prevUserData = repo.get(prevUser);
-
-    //         // Delete the user's data now, we will restore it if the merge fails
-    //         repo.delete(prevUser);
-
-    //         firebase.auth().signInWithCredential(newCredential).then((result) => {
-    //         console.log("Sign In Success", result);
-    //         var currentUser = result.user;
-    //         var currentUserData = repo.get(currentUser);
-
-    //         // Merge prevUser and currentUser data stored in Firebase.
-    //         // Note: How you handle this is specific to your application
-    //         var mergedData = repo.merge(prevUserData, currentUserData);
-
-    //         return prevUser.linkWithCredential(result.credential)
-    //             .then((linkResult) => {
-    //             // Sign in with the newly linked credential
-    //             return auth.signInWithCredential(linkResult.credential);
-    //             })
-    //             .then((signInResult) => {
-    //             // Save the merged data to the new user
-    //             repo.set(signInResult.user, mergedData);
-    //             });
-    //         })
-    //     } catch (e) {
-    //         alert("Error!" + e.message);
-    //     }
-    // }
+    SendVerificationMail() {
+        var user: any = firebase.auth().currentUser;
+        user.sendEmailVerification()
+            .then(
+                this.ngZone.run(() => {
+                    this.router.navigate(['/login']);
+                })
+            );
+    }
 
     async signOut() {
         try {
