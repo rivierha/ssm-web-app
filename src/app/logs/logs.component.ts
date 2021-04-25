@@ -9,6 +9,7 @@ import { Log } from '../models/log.model';
 import {interval} from "rxjs/internal/observable/interval";
 import { Subscription } from 'rxjs';
 import {startWith, switchMap} from "rxjs/operators";
+import { AlertService } from '../alert';
 
 @Component({
   selector: 'app-logs',
@@ -27,7 +28,7 @@ export class LogsComponent implements OnInit, AfterViewInit {
   timeInterval: Subscription;
 
 
-  constructor(private logsService: LogsService, private route: ActivatedRoute) { 
+  constructor(private logsService: LogsService, private route: ActivatedRoute, private alertService: AlertService) { 
     this.logsControl = new FormControl('', Validators.required);
   }
 
@@ -47,7 +48,10 @@ export class LogsComponent implements OnInit, AfterViewInit {
       });
     } catch (error) {
       console.error(error);
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
     }
   } 
 
@@ -70,7 +74,10 @@ export class LogsComponent implements OnInit, AfterViewInit {
       this.timeInterval.unsubscribe();
     } catch (error) {
       console.error(error);
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
     }
   }
 
@@ -81,11 +88,17 @@ export class LogsComponent implements OnInit, AfterViewInit {
           console.log("log-delete", res);
           this.logs.pop(value);
           this.ngOnInit();
-          alert('Instance log deleted succesfully!');
+          this.alertService.info('Log deleted!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+          });
         }
       );
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
       console.warn(error);
     }
   }

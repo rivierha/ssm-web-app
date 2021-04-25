@@ -34,8 +34,10 @@ import { CreateInstanceDialogComponent } from './create-instance-dialog/create-i
 import { UseInstanceDialogComponent } from './use-instance-dialog/use-instance-dialog.component';
 import { LogsComponent } from './logs/logs.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatTooltipModule} from '@angular/material/tooltip';
-import { AlertComponent } from './_alert/alert/alert.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
+// ALERT
+import { AlertModule } from '../app/alert/alert.module';
 
 @NgModule({
   declarations: [
@@ -47,7 +49,6 @@ import { AlertComponent } from './_alert/alert/alert.component';
     CreateInstanceDialogComponent,
     UseInstanceDialogComponent,
     LogsComponent,
-    AlertComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +73,8 @@ import { AlertComponent } from './_alert/alert/alert.component';
     MatPaginatorModule,
     MatDialogModule,
     MatToolbarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    AlertModule
   ],
   providers: [],
   bootstrap: [AppComponent]

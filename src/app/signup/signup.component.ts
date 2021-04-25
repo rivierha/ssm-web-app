@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroupDirective, NgForm, Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AuthService } from '../auth/auth.service';
-import { Router } from '@angular/router';
+import { AlertService } from '../alert';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -24,7 +24,7 @@ export class SignupComponent implements OnInit {
   profileForm: FormGroup;
   matcher = new MyErrorStateMatcher(); 
     
-  constructor(private formBuilder: FormBuilder, private authService: AuthService,private router: Router,) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService,private alertService: AlertService) {
     this.profileForm = this.formBuilder.group({
       fullName: ['', [Validators.required]],
       email: ['', [Validators.required]],
@@ -48,7 +48,10 @@ export class SignupComponent implements OnInit {
     try {
       await this.authService.signUpWithEmailPassword(this.profileForm.value.fullName, this.profileForm.value.email, this.profileForm.value.password);
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      })
       console.error(error);
     }
   }

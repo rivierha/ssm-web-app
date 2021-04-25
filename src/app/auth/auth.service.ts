@@ -5,6 +5,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { UsersService } from '../services/users.service';
 import { User } from '../models/user.model';
+import { AlertService } from '../alert';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService {
     user: any;
     loggedIn = localStorage.getItem('user') ? true: false;
     
-    constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService) { 
+    constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService, private alertService: AlertService) { 
     } 
 
     async signInWithEmailPassword(email: string, password: string) {
@@ -26,7 +27,6 @@ export class AuthService {
                             this.user = res[0];
                             this.loggedIn = true;
                             localStorage.setItem('user', JSON.stringify(this.user));
-                            
                             if (this.user.team != null) {
                                 this.router.navigate(['/instances']);
                             }   
@@ -37,8 +37,12 @@ export class AuthService {
                     );
             })
             return data;
-        } catch (e) {
-            alert("Error!" + e.message);
+        } catch (error) {
+            this.alertService.error('Incorrect email or password. Try again!', {
+                autoClose: true,
+                keepAfterRouteChange: true
+            });
+            console.log(error.message);
         }
     }
 
@@ -56,12 +60,20 @@ export class AuthService {
                         this.user = res.user;
                         this.loggedIn = true;
                         localStorage.setItem('user', JSON.stringify(res.user));
+                        this.alertService.success('Successfully registed!', {
+                            autoClose: true,
+                            keepAfterRouteChange: true
+                        });
                         this.router.navigate(['/teams']);
                     }
                 );
             })
-        } catch (e) {
-            alert("Error!" + e.message);
+        } catch (error) {
+            this.alertService.error(error.message, {
+                autoClose: true,
+                keepAfterRouteChange: true
+            });
+            console.log(error.message);
         }
     }
     
@@ -89,7 +101,11 @@ export class AuthService {
                 console.log(source + " Sign In", user);
             });
         } catch (error) {
-                alert("Error!" + error.message);
+            this.alertService.error('Something went wrong. Try Again!', {
+                autoClose: true,
+                keepAfterRouteChange: true
+            });
+            console.log(error.message);
         }
     }    
 
@@ -137,9 +153,17 @@ export class AuthService {
                 this.user = null;
                 this.loggedIn = false;
                 localStorage.removeItem('user');
+                this.alertService.info('Logged out successfully!', {
+                    autoClose: true,
+                    keepAfterRouteChange: true
+                });
             });
         } catch (error) {
-             alert("Error!" + error.message);
+            this.alertService.error('Something went wrong. Try Again!', {
+                    autoClose: true,
+                    keepAfterRouteChange: true
+            });
+            console.error(error.message);
         }
     }
 

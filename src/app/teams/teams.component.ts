@@ -2,8 +2,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Validators, FormControl } from '@angular/forms';
 import { TeamsService } from '../services/teams.service';
 import { UsersService } from '../services/users.service';
-import { User } from '../models/user.model';
 import { Router } from '@angular/router';
+import { AlertService } from '../alert';
 
 @Component({
   selector: 'app-teams',
@@ -17,7 +17,7 @@ export class TeamsComponent implements OnInit {
   selectedValue: any;
   @Input() teams: any = [];
 
-  constructor(private teamsService: TeamsService, private usersService: UsersService, private router: Router ) { 
+  constructor(private teamsService: TeamsService, private usersService: UsersService, private router: Router, private alertService: AlertService ) { 
     this.teamsControl = new FormControl('', Validators.required);
     this.newTeamForm = new FormControl('', Validators.required);
   }
@@ -29,11 +29,13 @@ export class TeamsComponent implements OnInit {
   async getAllTeams() {
     try {
       await this.teamsService.getAllTeams().subscribe((res: any) => {
-        console.log("team", res);
         this.teams = res;
       });
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      })
       console.error(error);
     }
   }
@@ -45,17 +47,17 @@ export class TeamsComponent implements OnInit {
       user.team = this.selectedValue.id;
       await this.usersService.editUser(user).subscribe(
         (res: any) => {
-          console.log("user", res);
           localStorage.setItem('user', JSON.stringify(res.user));
-          alert('User updated succesfully!');
           this.router.navigate(['/instances']);
         }
       );
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
       console.warn(error);
     }
-    console.warn(this.teamsControl.value);
   }
 
   async createTeam() {
@@ -65,10 +67,17 @@ export class TeamsComponent implements OnInit {
           console.log("teams", res.team);
           this.teams.push(res);
           this.ngOnInit();
-          alert('Team created succesfully!');
+          this.alertService.success('Team added successfully!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+          })
         });
+        this.newTeamForm.reset();
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
       console.warn(error);
     }
   }

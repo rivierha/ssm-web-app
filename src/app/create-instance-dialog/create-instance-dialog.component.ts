@@ -16,7 +16,6 @@ export class CreateInstanceDialogComponent implements OnInit {
   constructor(
       private fb: FormBuilder,
       private dialogRef: MatDialogRef<CreateInstanceDialogComponent>,
-      // private instancesService: InstancesService,
       @Inject(MAT_DIALOG_DATA) data: any) {
       this.name = data.description;
   }

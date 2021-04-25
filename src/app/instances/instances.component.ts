@@ -12,6 +12,7 @@ import { LogsService } from '../services/logs.service';
 import {interval} from "rxjs/internal/observable/interval";
 import { Subscription } from 'rxjs';
 import {startWith, switchMap} from "rxjs/operators";
+import { AlertService } from '../alert';
 
 @Component({
   selector: 'app-instances',
@@ -27,8 +28,11 @@ export class InstancesComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [ 'name', 'status', 'created-at', 'logs', 'action','delete'];
   dataSource = new MatTableDataSource<Instance>(this.instances);
   timeInterval: Subscription;
-  
-  constructor(private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
+  options = {
+        autoClose: true,
+        keepAfterRouteChange: true
+    };
+  constructor(public alertService: AlertService, private dialog: MatDialog, private router: Router, private instancesService: InstancesService, private logsService: LogsService ) {   }
 
   async ngOnInit(): Promise<any> {
     try {
@@ -47,7 +51,10 @@ export class InstancesComponent implements OnInit, AfterViewInit {
       });
     } catch (error) {
       console.error(error);
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+        autoClose: true,
+        keepAfterRouteChange: true
+      });
     }
   }
 
@@ -96,11 +103,17 @@ export class InstancesComponent implements OnInit, AfterViewInit {
           console.log("instance-delete", res);
           this.instances.pop(instance);
           this.ngOnInit();
-          alert('Instance deleted succesfully!');
+          this.alertService.success('Instance successfully deleted!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+          });
         }
       );
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+      });
       console.warn(error);
     }
   }
@@ -119,11 +132,17 @@ export class InstancesComponent implements OnInit, AfterViewInit {
           console.log("instance", res);
           this.instances.push(res);
           this.ngOnInit();
-          alert('Instance created succesfully!');
+          this.alertService.success('Instance successfully created!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+          });
         }
       );
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+      });
       console.warn(error);
     }
   }
@@ -161,11 +180,17 @@ export class InstancesComponent implements OnInit, AfterViewInit {
         (res: any) => {
           console.log("log", res);
           this.ngOnInit();
-          alert('Instance in use!');
+          this.alertService.info('Instance in-use!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+          });
         }
       )
     } catch (error) {
-      alert('Something went wrong. Try Again!');
+      this.alertService.error('Something went wrong. Try Again!', {
+            autoClose: true,
+            keepAfterRouteChange: true
+      });
       console.warn(error);
     }
     

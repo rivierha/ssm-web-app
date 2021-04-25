@@ -37,7 +37,7 @@
                 <form (ngSubmit)="createTeam()">
                     <mat-form-field>
                         <mat-label>Name</mat-label>
-                        <input matInput [formControl]="newTeamForm" required>
+                        <input matInput [formControl]="newTeamForm" required placeholder="Enter team name">
                     </mat-form-field>
             
                     <button mat-icon-button type="submit" color="primary" [disabled]="!newTeamForm.valid">
