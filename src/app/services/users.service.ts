@@ -26,6 +26,7 @@ export class UsersService {
 
   getAllUsers(args: any): Observable<User[]> {
     let params = new HttpParams();
+    console.log(args, "args");
     params = params.append('email', args);
     return this.http.get<User[]>(`${this.url}`, {params: params});
   }

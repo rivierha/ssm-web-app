@@ -26,6 +26,7 @@ import {
 export class AuthService {
 	user: any;
 	loggedIn = localStorage.getItem('user') ? true : false;
+	currentUserName: string;
 
 	constructor(public afAuth: AngularFireAuth, public router: Router, private usersService: UsersService, private alertService: AlertService, private ngZone: NgZone) {}
 
@@ -43,6 +44,7 @@ export class AuthService {
 						var user = userCredentials.user;
 						var data: User = {
 							email: user.email,
+							name: this.currentUserName
 						}
 						await this.usersService.getAllUsers(data.email).subscribe(
 							(res: any) => {
@@ -83,6 +85,7 @@ export class AuthService {
 					email: user.email,
 					name: name
 				}
+				this.currentUserName = name;
 				this.SendVerificationMail();
 			})
 		} catch (error) {
