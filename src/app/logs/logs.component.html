@@ -25,9 +25,8 @@
 </div>
 
 <div style="padding: 20px;">
-    <!-- <div style="font-size: x-large; left: 50%; align-content: center;" *ngIf="dataSource.data.length === 0">No records found</div> -->
+    
     <table mat-table [dataSource]="dataSource" matSort>
-        
 
         <ng-container matColumnDef="reason">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Reason to use</th>
@@ -71,6 +70,10 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <span *ngIf="dataSource" style="font-size: 20px; margin: 10px; color: gray; text-align: center;">
+        <div *ngIf="dataSource.data.length === 0">No records found!</div>
+    </span>
 
     <mat-paginator [pageSizeOptions]="[10, 20, 30]" showFirstLastButtons></mat-paginator>
 </div>
