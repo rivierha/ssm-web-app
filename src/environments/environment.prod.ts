@@ -8,5 +8,5 @@ export const environment = {
     messagingSenderId: "191605711614",
     appId: "1:191605711614:web:4e0bfc7acefc098f2fbbaf"
   },
-  api: "https://ssm-freshworks.herokuapp.com/"
+  api: "https://ssm-freshworks.herokuapp.com/api/v1/"
 };
