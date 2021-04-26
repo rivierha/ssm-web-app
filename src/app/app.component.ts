@@ -15,8 +15,11 @@ import {
 })
 export class AppComponent {
 	title = 'SSM';
-	constructor(public router: Router, private auth: AuthService) {}
+	constructor(public router: Router, private auth: AuthService) {
+		console.log("VERSION-2")
+	}
 
+	
 	logoutUser() {
 		this.auth.signOut();
 	}
