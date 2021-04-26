@@ -164,11 +164,15 @@ export class AuthService {
 	SendVerificationMail() {
 		var user: any = firebase.auth().currentUser;
 		user.sendEmailVerification()
-			.then(
+			.then(() => {
+				this.alertService.warn('Please validate your email address to proceed. Kindly check your inbox.', {
+					autoClose: false,
+					keepAfterRouteChange: true
+				});
 				this.ngZone.run(() => {
 					this.router.navigate(['/login']);
 				})
-			);
+			});
 	}
 
 	async signOut() {
