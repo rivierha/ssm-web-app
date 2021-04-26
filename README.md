@@ -49,6 +49,8 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 
 The application is a staging stack management app. It uses a custom API for all requests, including firebase for authentication. You can view a live demo over at - **
 - view the api source code here - https://github.com/rivierha/ssm-api
+
+
 **General functionality:**
 
 - Authenticate users via Firebase Authentication (login/signup pages + logout button on dahboard page)
