@@ -8,5 +8,5 @@ export const environment = {
     messagingSenderId: "191605711614",
     appId: "1:191605711614:web:4e0bfc7acefc098f2fbbaf"
   },
-  api: "http://ec2-54-82-22-93.compute-1.amazonaws.com:3000/api/v1/"
+  api: "https://cors-anywhere.herokuapp.com/http://ec2-54-82-22-93.compute-1.amazonaws.com:3000/api/v1/"
 };
