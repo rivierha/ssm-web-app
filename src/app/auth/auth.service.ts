@@ -107,7 +107,9 @@ export class AuthService {
 					autoClose: true,
 					keepAfterRouteChange: true
 				});
-				this.router.navigate(['/teams']);
+				this.ngZone.run(() => {
+					this.router.navigate(['/teams']);
+				});
 			}
 		);
 	}
